@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="ur" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#1a3a2a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>HASHMANI TRADERS</title>
+<style>
+  :root {
+    --green-dark: #1a3a2a;
+    --green-mid: #2d6a4f;
+    --green-light: #40916c;
+    --green-pale: #d8f3dc;
+    --gold: #f4a261;
+    --gold-dark: #e76f51;
+    --white: #ffffff;
+    --bg: #f0f4f1;
+    --card: #ffffff;
+    --text: #1a2e1f;
+    --text2: #4a6355;
+    --border: #c8ddd0;
+    --red: #e63946;
+    --blue: #1d7fd4;
+    --shadow: 0 2px 12px rgba(0,0,0,0.10);
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* LOGIN */
+  #login-screen {
+    min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: linear-gradient(160deg, #1a3a2a 0%, #2d6a4f 60%, #40916c 100%);
+    padding: 2rem;
+  }
+  .login-logo { text-align: center; margin-bottom: 2rem; }
+  .login-logo .brand { font-size: 1.6rem; font-weight: 800; color: #fff; letter-spacing: 2px; }
+  .login-logo .sub { font-size: 0.85rem; color: #b7e4c7; letter-spacing: 1px; margin-top: 4px; }
+  .login-logo .icon { font-size: 3rem; margin-bottom: 0.5rem; }
+  .login-card { background: #fff; border-radius: 16px; padding: 2rem; width: 100%; max-width: 360px; }
+  .login-card h2 { color: var(--green-dark); margin-bottom: 1.5rem; font-size: 1.1rem; text-align: center; }
+  .form-group { margin-bottom: 1rem; }
+  .form-group label { display: block; font-size: 0.8rem; color: var(--text2); margin-bottom: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  .form-group input { width: 100%; padding: 0.75rem 1rem; border: 1.5px solid var(--border); border-radius: 8px; font-size: 1rem; outline: none; transition: border 0.2s; }
+  .form-group input:focus { border-color: var(--green-mid); }
+  .btn-login { width: 100%; padding: 0.85rem; background: var(--green-mid); color: #fff; border: none; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 0.5rem; letter-spacing: 1px; }
+  .btn-login:active { background: var(--green-dark); }
+  .login-err { color: var(--red); font-size: 0.85rem; text-align: center; margin-top: 0.5rem; display: none; }
+
+  /* MAIN APP */
+  #app { display: none; flex-direction: column; min-height: 100vh; }
+
+  /* TOP BAR */
+  .topbar { background: var(--green-dark); color: #fff; padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+  .topbar-left { display: flex; align-items: center; gap: 0.5rem; }
+  .topbar-title { font-size: 0.95rem; font-weight: 800; letter-spacing: 1px; }
+  .topbar-date { font-size: 0.7rem; color: #b7e4c7; }
+  .topbar-right { display: flex; gap: 8px; }
+  .icon-btn { background: rgba(255,255,255,0.12); border: none; color: #fff; border-radius: 8px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; }
+  .icon-btn:active { background: rgba(255,255,255,0.25); }
+
+  /* TABS */
+  .tabs-wrap { background: var(--green-dark); padding: 0 0.5rem 0.5rem; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
+  .tabs-wrap::-webkit-scrollbar { display: none; }
+  .tab-btn { display: inline-block; padding: 0.4rem 0.9rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; cursor: pointer; border: none; background: rgba(255,255,255,0.12); color: #c8f0d8; margin-right: 4px; transition: all 0.2s; white-space: nowrap; }
+  .tab-btn.active { background: var(--gold); color: var(--green-dark); }
+  .tab-add-btn { display: inline-flex; align-items: center; gap: 4px; padding: 0.4rem 0.9rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; cursor: pointer; border: 1.5px dashed rgba(255,255,255,0.4); background: transparent; color: #b7e4c7; margin-right: 4px; }
+
+  /* CONTENT */
+  .content { flex: 1; padding: 1rem; }
+
+  /* ACCOUNT PAGE */
+  .account-header { background: var(--green-mid); border-radius: var(--radius); padding: 1.2rem; color: #fff; margin-bottom: 1rem; }
+  .account-name { font-size: 1.2rem; font-weight: 800; }
+  .account-type { font-size: 0.75rem; color: #b7e4c7; margin-top: 2px; }
+  .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem; }
+  .sum-card { background: var(--card); border-radius: var(--radius); padding: 0.9rem; border: 1px solid var(--border); }
+  .sum-label { font-size: 0.72rem; color: var(--text2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  .sum-value { font-size: 1.4rem; font-weight: 800; margin-top: 4px; }
+  .sum-value.income { color: var(--green-mid); }
+  .sum-value.expense { color: var(--red); }
+  .sum-value.net { color: var(--green-dark); }
+  .sum-value.net.neg { color: var(--red); }
+
+  /* ADD BUTTONS */
+  .action-row { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+  .btn { padding: 0.6rem 1rem; border-radius: 8px; font-size: 0.85rem; font-weight: 700; cursor: pointer; border: none; display: flex; align-items: center; gap: 5px; }
+  .btn-green { background: var(--green-mid); color: #fff; }
+  .btn-red { background: var(--red); color: #fff; }
+  .btn-blue { background: var(--blue); color: #fff; }
+  .btn-gray { background: #e8ede9; color: var(--text); }
+  .btn:active { opacity: 0.8; }
+  .btn-full { width: 100%; justify-content: center; margin-bottom: 0.5rem; }
+
+  /* ENTRIES LIST */
+  .section-title { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text2); margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; }
+  .entry-list { display: flex; flex-direction: column; gap: 0.5rem; }
+  .entry-card { background: var(--card); border-radius: 10px; padding: 0.8rem 1rem; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; }
+  .entry-info .entry-cat { font-size: 0.72rem; color: var(--text2); }
+  .entry-info .entry-desc { font-size: 0.9rem; font-weight: 600; margin: 2px 0; }
+  .entry-info .entry-date { font-size: 0.72rem; color: var(--text2); }
+  .entry-amount { font-size: 1rem; font-weight: 800; white-space: nowrap; }
+  .entry-amount.income { color: var(--green-mid); }
+  .entry-amount.expense { color: var(--red); }
+  .entry-del { background: none; border: none; color: #ccc; cursor: pointer; font-size: 1rem; padding: 0 0 0 8px; align-self: center; }
+  .entry-del:active { color: var(--red); }
+
+  /* MODAL */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; display: none; align-items: flex-end; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: #fff; border-radius: 20px 20px 0 0; padding: 1.5rem; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; }
+  .modal-title { font-size: 1.1rem; font-weight: 800; color: var(--green-dark); margin-bottom: 1.2rem; display: flex; justify-content: space-between; align-items: center; }
+  .modal-close { background: #f0f0f0; border: none; border-radius: 50%; width: 30px; height: 30px; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .field { margin-bottom: 1rem; }
+  .field label { display: block; font-size: 0.78rem; font-weight: 700; color: var(--text2); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .field input, .field select, .field textarea { width: 100%; padding: 0.7rem; border: 1.5px solid var(--border); border-radius: 8px; font-size: 0.95rem; outline: none; }
+  .field input:focus, .field select:focus { border-color: var(--green-mid); }
+  .field textarea { resize: vertical; min-height: 70px; }
+  .type-toggle { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+  .type-btn { flex: 1; padding: 0.6rem; border: 2px solid var(--border); border-radius: 8px; font-size: 0.9rem; font-weight: 700; cursor: pointer; background: #fff; transition: all 0.2s; text-align: center; }
+  .type-btn.income.active { background: #d8f3dc; border-color: var(--green-mid); color: var(--green-mid); }
+  .type-btn.expense.active { background: #ffe0e0; border-color: var(--red); color: var(--red); }
+
+  /* FILTER ROW */
+  .filter-row { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+  .filter-btn { padding: 0.35rem 0.8rem; border-radius: 20px; font-size: 0.78rem; font-weight: 600; cursor: pointer; border: 1.5px solid var(--border); background: #fff; color: var(--text2); }
+  .filter-btn.active { background: var(--green-mid); color: #fff; border-color: var(--green-mid); }
+  .month-select { padding: 0.35rem 0.6rem; border-radius: 8px; font-size: 0.8rem; border: 1.5px solid var(--border); outline: none; background: #fff; }
+
+  /* SUMMARY TAB */
+  .summary-page { padding-bottom: 2rem; }
+  .summary-section { background: var(--card); border-radius: var(--radius); padding: 1rem; margin-bottom: 1rem; border: 1px solid var(--border); }
+  .summary-section h3 { font-size: 0.85rem; font-weight: 800; color: var(--green-dark); margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; }
+  .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid #f0f4f1; font-size: 0.9rem; }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-row .label { color: var(--text2); }
+  .summary-row .val { font-weight: 700; }
+  .summary-row .val.income { color: var(--green-mid); }
+  .summary-row .val.expense { color: var(--red); }
+  .summary-row .val.net { color: var(--green-dark); }
+  .bill-report-section { background: var(--card); border-radius: var(--radius); padding: 1rem; margin-bottom: 1rem; border: 1px solid var(--border); }
+  .bill-report-section h3 { font-size: 0.85rem; font-weight: 800; color: var(--green-dark); margin-bottom: 0.75rem; }
+  .bill-row { display: flex; justify-content: space-between; padding: 0.4rem 0; font-size: 0.85rem; border-bottom: 1px solid #f0f0f0; }
+  .bill-row:last-child { border-bottom: none; }
+  .total-bar { background: var(--green-pale); border-radius: 8px; padding: 0.75rem 1rem; margin-top: 0.5rem; display: flex; justify-content: space-between; font-weight: 800; font-size: 1rem; }
+
+  /* EMPTY STATE */
+  .empty-state { text-align: center; padding: 2rem 1rem; color: var(--text2); }
+  .empty-state .empty-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+  .empty-state p { font-size: 0.9rem; }
+
+  /* NO ENTRIES */
+  .no-entries { text-align: center; color: #aaa; font-size: 0.85rem; padding: 1.5rem 0; }
+
+  /* CATEGORY TAG */
+  .cat-tag { display: inline-block; background: #f0f4f1; color: var(--green-mid); border-radius: 20px; padding: 1px 8px; font-size: 0.7rem; font-weight: 600; margin-right: 4px; }
+  .cat-tag.expense { background: #fff0f0; color: var(--red); }
+
+  /* ADD ACCOUNT MODAL */
+  .add-account-note { font-size: 0.8rem; color: var(--text2); background: #f0f9f3; border-radius: 8px; padding: 0.6rem 0.8rem; margin-bottom: 1rem; }
+
+  /* SUMMARY TABS (daily/monthly) */
+  .stabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+  .stab { flex: 1; padding: 0.5rem; border-radius: 8px; text-align: center; font-size: 0.85rem; font-weight: 700; cursor: pointer; border: 1.5px solid var(--border); background: #fff; color: var(--text2); }
+  .stab.active { background: var(--green-mid); color: #fff; border-color: var(--green-mid); }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--green-dark); color: #fff; padding: 0.6rem 1.5rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; z-index: 500; display: none; }
+  .toast.show { display: block; }
+
+  /* RESPONSIVE */
+  @media (max-width: 360px) {
+    .summary-grid { grid-template-columns: 1fr; }
+    .sum-value { font-size: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-logo">
+    <div class="icon">🏪</div>
+    <div class="brand">HASHMANI TRADERS</div>
+    <div class="sub">Business Management System</div>
+  </div>
+  <div class="login-card">
+    <h2>Login Karein</h2>
+    <div class="form-group">
+      <label>Username</label>
+      <input type="text" id="login-user" placeholder="Username daakhil karein" autocomplete="username">
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="login-pass" placeholder="Password daakhil karein" autocomplete="current-password">
+    </div>
+    <button class="btn-login" onclick="doLogin()">LOGIN</button>
+    <p class="login-err" id="login-err">❌ Ghalat Username ya Password</p>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-left">
+      <span>🏪</span>
+      <div>
+        <div class="topbar-title">HASHMANI TRADERS</div>
+        <div class="topbar-date" id="topbar-date"></div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button class="icon-btn" onclick="openSummaryModal()" title="Summary">📊</button>
+      <button class="icon-btn" onclick="doLogout()" title="Logout">🚪</button>
+    </div>
+  </div>
+
+  <div class="tabs-wrap" id="tabs-bar">
+    <!-- tabs rendered by JS -->
+  </div>
+
+  <div class="content" id="main-content">
+    <!-- content rendered by JS -->
+  </div>
+</div>
+
+<!-- ADD ENTRY MODAL -->
+<div class="modal-overlay" id="entry-modal">
+  <div class="modal">
+    <div class="modal-title">
+      <span id="entry-modal-title">Entry Add Karein</span>
+      <button class="modal-close" onclick="closeModal('entry-modal')">✕</button>
+    </div>
+    <div class="type-toggle">
+      <div class="type-btn income active" id="type-income" onclick="setEntryType('income')">⬆ Income</div>
+      <div class="type-btn expense" id="type-expense" onclick="setEntryType('expense')">⬇ Kharcha</div>
+    </div>
+    <div class="field">
+      <label>Category</label>
+      <select id="entry-cat">
+        <option value="">-- Category Chunein --</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Naya Category (optional)</label>
+      <input type="text" id="entry-newcat" placeholder="Naya category likhein (e.g. Rent)">
+    </div>
+    <div class="field">
+      <label>Raqam (Rs.)</label>
+      <input type="number" id="entry-amount" placeholder="0" min="0" inputmode="numeric">
+    </div>
+    <div class="field">
+      <label>Tafseelaat (optional)</label>
+      <input type="text" id="entry-desc" placeholder="Mukhtasar tafseelaat">
+    </div>
+    <div class="field">
+      <label>Tarikh</label>
+      <input type="date" id="entry-date">
+    </div>
+    <button class="btn btn-green btn-full" onclick="saveEntry()">✅ Save Karein</button>
+    <button class="btn btn-gray btn-full" onclick="closeModal('entry-modal')">Bund Karein</button>
+  </div>
+</div>
+
+<!-- ADD ACCOUNT MODAL -->
+<div class="modal-overlay" id="account-modal">
+  <div class="modal">
+    <div class="modal-title">
+      <span>Naya Khata Add Karein</span>
+      <button class="modal-close" onclick="closeModal('account-modal')">✕</button>
+    </div>
+    <div class="add-account-note">⚡ Aap naya khata/tab yahan add kar sakte hain. Jaise naya shop, partner ka khata, wagera.</div>
+    <div class="field">
+      <label>Khata ka Naam</label>
+      <input type="text" id="new-acc-name" placeholder="e.g. New Shop / Partner Name">
+    </div>
+    <div class="field">
+      <label>Khata ki Qisam</label>
+      <select id="new-acc-type">
+        <option value="shop">Shop</option>
+        <option value="ghaat">Ghaat / Laundry</option>
+        <option value="personal">Personal</option>
+        <option value="home">Ghar</option>
+        <option value="partner">Partner</option>
+        <option value="other">Doosra</option>
+      </select>
+    </div>
+    <button class="btn btn-green btn-full" onclick="addAccount()">✅ Khata Banao</button>
+    <button class="btn btn-gray btn-full" onclick="closeModal('account-modal')">Bund Karein</button>
+  </div>
+</div>
+
+<!-- SUMMARY MODAL -->
+<div class="modal-overlay" id="summary-modal">
+  <div class="modal">
+    <div class="modal-title">
+      <span>📊 Summary Report</span>
+      <button class="modal-close" onclick="closeModal('summary-modal')">✕</button>
+    </div>
+    <div class="stabs">
+      <div class="stab active" onclick="setSummaryTab('daily',this)">Aaj ka</div>
+      <div class="stab" onclick="setSummaryTab('monthly',this)">Maheena</div>
+      <div class="stab" onclick="setSummaryTab('bills',this)">Bills Report</div>
+    </div>
+    <div id="summary-content"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============ DATA ============
+const CREDS = { user: 'HASHMANI', pass: 'AZEEM123' };
+const DEFAULT_ACCOUNTS = [
+  { id: 'al-mehboob', name: 'Al Mehboob', type: 'shop' },
+  { id: 'hls-gsb', name: 'HLS-GSB', type: 'shop' },
+  { id: 'hls-golarchi', name: 'HLS Golarchi', type: 'shop' },
+  { id: 'hls-pl', name: 'HLS-PL', type: 'shop' },
+  { id: 'fine-wash', name: 'Fine Wash', type: 'shop' },
+  { id: 'ghaat', name: 'Ghaat', type: 'ghaat' },
+  { id: 'self', name: 'Self', type: 'personal' },
+  { id: 'home', name: 'Home', type: 'home' },
+];
+
+const DEFAULT_CATS = {
+  income: ['Sales', 'Commission', 'Rent Received', 'Loan Recovery', 'Other Income'],
+  expense: ['Gas Bill', 'Light Bill', 'Water Bill', 'Rent', 'Salary', 'Purchase', 'Transport', 'Repair', 'Phone Bill', 'Other']
+};
+
+let state = {
+  accounts: [],
+  entries: [],
+  activeAccountId: null,
+  summaryTab: 'daily',
+};
+
+function loadData() {
+  try {
+    const acc = localStorage.getItem('ht_accounts');
+    const ent = localStorage.getItem('ht_entries');
+    state.accounts = acc ? JSON.parse(acc) : [...DEFAULT_ACCOUNTS];
+    state.entries = ent ? JSON.parse(ent) : [];
+    if (state.accounts.length === 0) state.accounts = [...DEFAULT_ACCOUNTS];
+    if (!state.activeAccountId) state.activeAccountId = state.accounts[0].id;
+  } catch(e) {
+    state.accounts = [...DEFAULT_ACCOUNTS];
+    state.entries = [];
+  }
+}
+
+function saveData() {
+  localStorage.setItem('ht_accounts', JSON.stringify(state.accounts));
+  localStorage.setItem('ht_entries', JSON.stringify(state.entries));
+}
+
+// ============ AUTH ============
+function doLogin() {
+  const u = document.getElementById('login-user').value.trim().toUpperCase();
+  const p = document.getElementById('login-pass').value.trim();
+  if (u === CREDS.user && p === CREDS.pass) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    loadData();
+    if (!state.activeAccountId && state.accounts.length > 0) state.activeAccountId = state.accounts[0].id;
+    renderAll();
+    updateDate();
+  } else {
+    document.getElementById('login-err').style.display = 'block';
+  }
+}
+
+document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+function doLogout() {
+  if(confirm('Logout karna chahte hain?')) {
+    document.getElementById('app').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('login-user').value = '';
+    document.getElementById('login-pass').value = '';
+    document.getElementById('login-err').style.display = 'none';
+  }
+}
+
+function updateDate() {
+  const now = new Date();
+  const opts = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+  document.getElementById('topbar-date').textContent = now.toLocaleDateString('ur-PK', opts) || now.toDateString();
+}
+
+// ============ RENDER ============
+function renderAll() {
+  renderTabs();
+  renderContent();
+}
+
+function renderTabs() {
+  const bar = document.getElementById('tabs-bar');
+  bar.innerHTML = '';
+  state.accounts.forEach(acc => {
+    const btn = document.createElement('button');
+    btn.className = 'tab-btn' + (acc.id === state.activeAccountId ? ' active' : '');
+    btn.textContent = tabIcon(acc.type) + ' ' + acc.name;
+    btn.onclick = () => { state.activeAccountId = acc.id; renderAll(); };
+    bar.appendChild(btn);
+  });
+  const addBtn = document.createElement('button');
+  addBtn.className = 'tab-add-btn';
+  addBtn.innerHTML = '+ Naya Khata';
+  addBtn.onclick = () => openModal('account-modal');
+  bar.appendChild(addBtn);
+}
+
+function tabIcon(type) {
+  const icons = { shop: '🏪', ghaat: '🚿', personal: '👤', home: '🏠', partner: '🤝', other: '📁' };
+  return icons[type] || '📁';
+}
+
+function renderContent() {
+  const acc = state.accounts.find(a => a.id === state.activeAccountId);
+  if (!acc) return;
+  const content = document.getElementById('main-content');
+
+  const today = toDateStr(new Date());
+  const currentMonth = today.substring(0, 7);
+  const entries = state.entries.filter(e => e.accountId === acc.id);
+  const todayEntries = entries.filter(e => e.date === today);
+  const monthEntries = entries.filter(e => e.date.startsWith(currentMonth));
+
+  const todayIncome = todayEntries.filter(e => e.type === 'income').reduce((s, e) => s + e.amount, 0);
+  const todayExp = todayEntries.filter(e => e.type === 'expense').reduce((s, e) => s + e.amount, 0);
+  const monthIncome = monthEntries.filter(e => e.type === 'income').reduce((s, e) => s + e.amount, 0);
+  const monthExp = monthEntries.filter(e => e.type === 'expense').reduce((s, e) => s + e.amount, 0);
+  const totalIncome = entries.filter(e => e.type === 'income').reduce((s, e) => s + e.amount, 0);
+  const totalExp = entries.filter(e => e.type === 'expense').reduce((s, e) => s + e.amount, 0);
+  const netBalance = totalIncome - totalExp;
+
+  // Filter state
+  const filterId = 'filter_' + acc.id;
+  const filterState = window[filterId] || { period: 'today', type: 'all', month: currentMonth };
+  window[filterId] = filterState;
+
+  let filtered = entries;
+  if (filterState.period === 'today') filtered = entries.filter(e => e.date === today);
+  else if (filterState.period === 'month') filtered = entries.filter(e => e.date.startsWith(filterState.month));
+  else if (filterState.period === 'all') filtered = [...entries];
+  if (filterState.type !== 'all') filtered = filtered.filter(e => e.type === filterState.type);
+  filtered.sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
+
+  const fIncome = filtered.filter(e => e.type === 'income').reduce((s, e) => s + e.amount, 0);
+  const fExp = filtered.filter(e => e.type === 'expense').reduce((s, e) => s + e.amount, 0);
+
+  content.innerHTML = `
+    <div class="account-header">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div>
+          <div class="account-name">${tabIcon(acc.type)} ${acc.name}</div>
+          <div class="account-type">${typeLabel(acc.type)}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:0.72rem;color:#b7e4c7;">Kul Balance</div>
+          <div style="font-size:1.4rem;font-weight:800;color:${netBalance < 0 ? '#ffb3b3' : '#d8f3dc'}">${fmt(netBalance)}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary-grid">
+      <div class="sum-card">
+        <div class="sum-label">Aaj Income</div>
+        <div class="sum-value income">${fmt(todayIncome)}</div>
+      </div>
+      <div class="sum-card">
+        <div class="sum-label">Aaj Kharcha</div>
+        <div class="sum-value expense">${fmt(todayExp)}</div>
+      </div>
+      <div class="sum-card">
+        <div class="sum-label">Is Maheene Income</div>
+        <div class="sum-value income">${fmt(monthIncome)}</div>
+      </div>
+      <div class="sum-card">
+        <div class="sum-label">Is Maheene Kharcha</div>
+        <div class="sum-value expense">${fmt(monthExp)}</div>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <button class="btn btn-green" onclick="openEntryModal('income')">⬆ Income</button>
+      <button class="btn btn-red" onclick="openEntryModal('expense')">⬇ Kharcha</button>
+      ${state.accounts.length > 1 && !DEFAULT_ACCOUNTS.find(d => d.id === acc.id) ? `<button class="btn btn-gray" onclick="deleteAccount('${acc.id}')">🗑</button>` : ''}
+    </div>
+
+    <div class="filter-row">
+      <button class="filter-btn ${filterState.period==='today'?'active':''}" onclick="setFilter('period','today','${acc.id}')">Aaj</button>
+      <button class="filter-btn ${filterState.period==='month'?'active':''}" onclick="setFilter('period','month','${acc.id}')">Maheena</button>
+      <button class="filter-btn ${filterState.period==='all'?'active':''}" onclick="setFilter('period','all','${acc.id}')">Sab</button>
+      <select class="month-select" onchange="setMonthFilter(this.value,'${acc.id}')">${monthOptions(filterState.month)}</select>
+    </div>
+    <div class="filter-row">
+      <button class="filter-btn ${filterState.type==='all'?'active':''}" onclick="setFilter('type','all','${acc.id}')">Sab</button>
+      <button class="filter-btn ${filterState.type==='income'?'active':''}" onclick="setFilter('type','income','${acc.id}')">Income</button>
+      <button class="filter-btn ${filterState.type==='expense'?'active':''}" onclick="setFilter('type','expense','${acc.id}')">Kharcha</button>
+    </div>
+
+    <div class="summary-row" style="background:#f8fdf9;border-radius:8px;padding:0.5rem 0.75rem;margin-bottom:0.75rem;border:1px solid #d8f3dc;">
+      <span style="font-size:0.82rem;font-weight:700;color:var(--text2)">Filter Natija:</span>
+      <span style="font-size:0.82rem;font-weight:800;">
+        <span style="color:var(--green-mid)">+${fmt(fIncome)}</span>
+        &nbsp;|&nbsp;
+        <span style="color:var(--red)">-${fmt(fExp)}</span>
+        &nbsp;|&nbsp;
+        <span style="color:${(fIncome-fExp)>=0?'var(--green-dark)':'var(--red)'}">=${fmt(fIncome-fExp)}</span>
+      </span>
+    </div>
+
+    <div class="section-title">
+      <span>Entries</span>
+      <span style="font-size:0.78rem;font-weight:400;color:#aaa">${filtered.length} record</span>
+    </div>
+    <div class="entry-list" id="entry-list">
+      ${filtered.length === 0 ? '<div class="no-entries">Koi entry nahi mili</div>' :
+        filtered.map(e => `
+          <div class="entry-card">
+            <div class="entry-info">
+              <div><span class="cat-tag ${e.type}">${e.category}</span><span class="entry-cat">${e.type === 'income' ? '⬆ Income' : '⬇ Kharcha'}</span></div>
+              <div class="entry-desc">${e.description || e.category}</div>
+              <div class="entry-date">📅 ${formatDate(e.date)}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:4px;">
+              <div class="entry-amount ${e.type}">${e.type === 'income' ? '+' : '-'}${fmt(e.amount)}</div>
+              <button class="entry-del" onclick="deleteEntry(${e.id})">🗑</button>
+            </div>
+          </div>
+        `).join('')
+      }
+    </div>
+  `;
+}
+
+function typeLabel(t) {
+  const labels = { shop: 'Shop / Dukaan', ghaat: 'Ghaat / Laundry', personal: 'Personal Kharcha', home: 'Ghar ka Kharcha', partner: "Partner's Account", other: 'Doosra Khata' };
+  return labels[t] || t;
+}
+
+function monthOptions(selected) {
+  const months = [];
+  const now = new Date();
+  for (let i = 0; i < 12; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const val = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    const label = d.toLocaleDateString('en-PK', { year: 'numeric', month: 'long' });
+    months.push(`<option value="${val}" ${val===selected?'selected':''}>${label}</option>`);
+  }
+  return months.join('');
+}
+
+function setFilter(key, val, accId) {
+  const filterId = 'filter_' + accId;
+  window[filterId] = window[filterId] || {};
+  window[filterId][key] = val;
+  renderContent();
+}
+
+function setMonthFilter(val, accId) {
+  const filterId = 'filter_' + accId;
+  window[filterId] = window[filterId] || {};
+  window[filterId].month = val;
+  window[filterId].period = 'month';
+  renderContent();
+}
+
+// ============ ENTRY MODAL ============
+let currentEntryType = 'income';
+function openEntryModal(type) {
+  currentEntryType = type;
+  setEntryType(type);
+  document.getElementById('entry-date').value = toDateStr(new Date());
+  document.getElementById('entry-amount').value = '';
+  document.getElementById('entry-desc').value = '';
+  document.getElementById('entry-newcat').value = '';
+  populateCatDropdown(type);
+  document.getElementById('entry-modal-title').textContent = type === 'income' ? '⬆ Income Add Karein' : '⬇ Kharcha Add Karein';
+  openModal('entry-modal');
+}
+
+function setEntryType(type) {
+  currentEntryType = type;
+  document.getElementById('type-income').classList.toggle('active', type === 'income');
+  document.getElementById('type-expense').classList.toggle('active', type === 'expense');
+  populateCatDropdown(type);
+}
+
+function populateCatDropdown(type) {
+  const sel = document.getElementById('entry-cat');
+  const acc = state.accounts.find(a => a.id === state.activeAccountId);
+  const key = `cats_${state.activeAccountId}_${type}`;
+  const saved = JSON.parse(localStorage.getItem(key) || '[]');
+  const defaults = DEFAULT_CATS[type] || [];
+  const all = [...new Set([...defaults, ...saved])];
+  sel.innerHTML = '<option value="">-- Category Chunein --</option>' + all.map(c => `<option value="${c}">${c}</option>`).join('');
+}
+
+function saveEntry() {
+  const amount = parseFloat(document.getElementById('entry-amount').value);
+  if (!amount || amount <= 0) { showToast('Raqam likhein!'); return; }
+  let cat = document.getElementById('entry-cat').value;
+  const newCat = document.getElementById('entry-newcat').value.trim();
+  if (newCat) {
+    cat = newCat;
+    const key = `cats_${state.activeAccountId}_${currentEntryType}`;
+    const saved = JSON.parse(localStorage.getItem(key) || '[]');
+    if (!saved.includes(newCat)) {
+      saved.push(newCat);
+      localStorage.setItem(key, JSON.stringify(saved));
+    }
+  }
+  if (!cat) { showToast('Category chunein ya likhein!'); return; }
+  const date = document.getElementById('entry-date').value || toDateStr(new Date());
+  const desc = document.getElementById('entry-desc').value.trim();
+  const entry = {
+    id: Date.now(),
+    accountId: state.activeAccountId,
+    type: currentEntryType,
+    category: cat,
+    amount: amount,
+    description: desc,
+    date: date,
+  };
+  state.entries.push(entry);
+  saveData();
+  closeModal('entry-modal');
+  renderContent();
+  showToast(`✅ ${currentEntryType === 'income' ? 'Income' : 'Kharcha'} save ho gaya!`);
+}
+
+function deleteEntry(id) {
+  if (!confirm('Ye entry delete karni hai?')) return;
+  state.entries = state.entries.filter(e => e.id !== id);
+  saveData();
+  renderContent();
+  showToast('Entry delete ho gayi');
+}
+
+// ============ ACCOUNT MODAL ============
+function addAccount() {
+  const name = document.getElementById('new-acc-name').value.trim();
+  if (!name) { showToast('Naam likhein!'); return; }
+  const type = document.getElementById('new-acc-type').value;
+  const id = 'acc_' + Date.now();
+  state.accounts.push({ id, name, type });
+  saveData();
+  state.activeAccountId = id;
+  closeModal('account-modal');
+  renderAll();
+  showToast('✅ Naya khata ban gaya: ' + name);
+}
+
+function deleteAccount(id) {
+  if (!confirm('Ye khata aur iski saari entries delete hogi. Yaqeen hai?')) return;
+  state.accounts = state.accounts.filter(a => a.id !== id);
+  state.entries = state.entries.filter(e => e.accountId !== id);
+  state.activeAccountId = state.accounts[0]?.id || null;
+  saveData();
+  renderAll();
+  showToast('Khata delete ho gaya');
+}
+
+// ============ SUMMARY MODAL ============
+let currentSummaryTab = 'daily';
+function openSummaryModal() {
+  currentSummaryTab = 'daily';
+  document.querySelectorAll('.stab').forEach((el, i) => el.classList.toggle('active', i === 0));
+  renderSummary();
+  openModal('summary-modal');
+}
+
+function setSummaryTab(tab, el) {
+  currentSummaryTab = tab;
+  document.querySelectorAll('.stab').forEach(e => e.classList.remove('active'));
+  el.classList.add('active');
+  renderSummary();
+}
+
+function renderSummary() {
+  const today = toDateStr(new Date());
+  const currentMonth = today.substring(0, 7);
+  const sel = document.querySelector('.month-select');
+  const filterMonth = currentMonth;
+  let html = '';
+
+  if (currentSummaryTab === 'daily') {
+    html += `<div class="summary-section"><h3>📅 Aaj Ki Summary (${formatDate(today)})</h3>`;
+    let grandIncome = 0, grandExp = 0;
+    state.accounts.forEach(acc => {
+      const entries = state.entries.filter(e => e.accountId === acc.id && e.date === today);
+      const inc = entries.filter(e => e.type === 'income').reduce((s, e) => s + e.amount, 0);
+      const exp = entries.filter(e => e.type === 'expense').reduce((s, e) => s + e.amount, 0);
+      grandIncome += inc; grandExp += exp;
+      html += `<div class="summary-row">
+        <span class="label">${tabIcon(acc.type)} ${acc.name}</span>
+        <span style="display:flex;gap:8px;">
+          <span class="val income">+${fmt(inc)}</span>
+          <span class="val expense">-${fmt(exp)}</span>
+        </span>
+      </div>`;
+    });
+    html += `<div class="total-bar"><span>Total</span><span style="display:flex;gap:12px;"><span style="color:var(--green-mid)">+${fmt(grandIncome)}</span><span style="color:var(--red)">-${fmt(grandExp)}</span><span>=${fmt(grandIncome-grandExp)}</span></span></div>`;
+    html += '</div>';
+  }
+
+  else if (currentSummaryTab === 'monthly') {
+    // Month selector
+    html += `<div class="field"><label>Maheena Chunein</label><select onchange="window._sumMonth=this.value;renderSummary()" id="sum-month-sel">${monthOptions(window._sumMonth||currentMonth)}</select></div>`;
+    const selMonth = window._sumMonth || currentMonth;
+    html += `<div class="summary-section"><h3>📆 ${selMonth} Ki Summary</h3>`;
+    let grandIncome = 0, grandExp = 0;
+    state.accounts.forEach(acc => {
+      const entries = state.entries.filter(e => e.accountId === acc.id && e.date.startsWith(selMonth));
+      const inc = entries.filter(e => e.type === 'income').reduce((s, e) => s + e.amount, 0);
+      const exp = entries.filter(e => e.type === 'expense').reduce((s, e) => s + e.amount, 0);
+      grandIncome += inc; grandExp += exp;
+      html += `<div class="summary-row">
+        <span class="label">${tabIcon(acc.type)} ${acc.name}</span>
+        <span style="display:flex;gap:8px;">
+          <span class="val income">+${fmt(inc)}</span>
+          <span class="val expense">-${fmt(exp)}</span>
+          <span class="val net ${(inc-exp)<0?'neg':''}">=${fmt(inc-exp)}</span>
+        </span>
+      </div>`;
+    });
+    html += `<div class="total-bar"><span>Grand Total</span><span style="display:flex;gap:12px;"><span style="color:var(--green-mid)">+${fmt(grandIncome)}</span><span style="color:var(--red)">-${fmt(grandExp)}</span><span>=${fmt(grandIncome-grandExp)}</span></span></div>`;
+    html += '</div>';
+  }
+
+  else if (currentSummaryTab === 'bills') {
+    html += `<div class="field"><label>Maheena Chunein</label><select onchange="window._billMonth=this.value;renderSummary()" id="bill-month-sel">${monthOptions(window._billMonth||currentMonth)}</select></div>`;
+    const selMonth = window._billMonth || currentMonth;
+    // Get all expense categories across all accounts
+    const allExpEntries = state.entries.filter(e => e.type === 'expense' && e.date.startsWith(selMonth));
+    const categories = [...new Set(allExpEntries.map(e => e.category))].sort();
+
+    if (categories.length === 0) {
+      html += '<div class="no-entries">Is maheene koi kharcha nahi mila</div>';
+    } else {
+      categories.forEach(cat => {
+        html += `<div class="bill-report-section"><h3>📋 ${cat}</h3>`;
+        let total = 0;
+        state.accounts.forEach(acc => {
+          const entries = allExpEntries.filter(e => e.accountId === acc.id && e.category === cat);
+          const amt = entries.reduce((s, e) => s + e.amount, 0);
+          if (amt > 0) {
+            total += amt;
+            html += `<div class="bill-row"><span>${tabIcon(acc.type)} ${acc.name}</span><span style="color:var(--red);font-weight:700;">${fmt(amt)}</span></div>`;
+          }
+        });
+        html += `<div class="total-bar"><span>Total ${cat}</span><span style="color:var(--red)">${fmt(total)}</span></div>`;
+        html += '</div>';
+      });
+    }
+  }
+
+  document.getElementById('summary-content').innerHTML = html;
+}
+
+// ============ HELPERS ============
+function fmt(n) { return 'Rs. ' + Math.abs(n).toLocaleString('en-PK', {minimumFractionDigits: 0, maximumFractionDigits: 0}); }
+function toDateStr(d) { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+function formatDate(s) {
+  if (!s) return '';
+  try {
+    const d = new Date(s + 'T00:00:00');
+    return d.toLocaleDateString('en-PK', { day: 'numeric', month: 'short', year: 'numeric' });
+  } catch(e) { return s; }
+}
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
+});
+
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// Enter key for login
+document.getElementById('login-user').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('login-pass').focus(); });
+
+// Init
+updateDate();
+setInterval(updateDate, 60000);
+</script>
+</body>
+</html>
